@@ -1,4 +1,4 @@
-name: "Superset: Key Gen"
+name: "LabelStudio: Key Gen"
 on:
   workflow_dispatch:
     inputs:
@@ -14,7 +14,7 @@ defaults:
 
 env:
   POSTGRES_KEYVAULT: "${{secrets.POSTGRES_KEYVAULT}}"
-  app_name: "superset"
+  app_name: "labelstudio"
 
 jobs:
   deployment:

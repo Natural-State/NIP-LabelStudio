@@ -63,7 +63,7 @@ jobs:
       - name: Create namespace and secret
         run: |
           source ./secrets.sh -n ${{env.namespace}} \
-            -s ${{env.tls_secret_name}} \
+            -tls ${{env.tls_secret_name}} \
             --tls-crt ${{env.TLS_CRT}} \
             --tls-key ${{env.TLS_KEY}} \
             --postrges_secret_name ${{env.postrges_secret_name}} \
