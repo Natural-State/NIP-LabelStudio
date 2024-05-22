@@ -22,6 +22,7 @@ from django.utils.decorators import method_decorator
 from django_filters import CharFilter, FilterSet
 from django_filters.rest_framework import DjangoFilterBackend
 from drf_yasg.utils import swagger_auto_schema
+from ml.serializers import MLBackendSerializer
 from projects.functions.next_task import get_next_task
 from projects.functions.stream_history import get_label_stream_history
 from projects.functions.utils import recalculate_created_annotations_and_labels_from_scratch
@@ -30,6 +31,7 @@ from projects.serializers import (
     GetFieldsSerializer,
     ProjectImportSerializer,
     ProjectLabelConfigSerializer,
+    ProjectModelVersionExtendedSerializer,
     ProjectReimportSerializer,
     ProjectSerializer,
     ProjectSummarySerializer,
@@ -41,6 +43,7 @@ from rest_framework.pagination import PageNumberPagination
 from rest_framework.parsers import FormParser, JSONParser, MultiPartParser
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
+from rest_framework.settings import api_settings
 from rest_framework.views import exception_handler
 from tasks.models import Task
 from tasks.serializers import (
@@ -52,8 +55,11 @@ from tasks.serializers import (
 from webhooks.models import WebhookAction
 from webhooks.utils import api_webhook, api_webhook_for_delete, emit_webhooks_for_instance
 
+from label_studio.core.utils.common import load_func
+
 logger = logging.getLogger(__name__)
 
+ProjectImportPermission = load_func(settings.PROJECT_IMPORT_PERMISSION)
 
 _result_schema = openapi.Schema(
     title='Labeling result',
@@ -123,7 +129,7 @@ class ProjectFilterSet(FilterSet):
         operation_summary='Create new project',
         operation_description="""
     Create a project and set up the labeling interface in Label Studio using the API.
-    
+
     ```bash
     curl -H Content-Type:application/json -H 'Authorization: Token abc123' -X POST '{}/api/projects' \
     --data '{{"label_config": "<View>[...]</View>"}}'
@@ -205,7 +211,6 @@ class ProjectListAPI(generics.ListCreateAPIView):
     ),
 )
 class ProjectAPI(generics.RetrieveUpdateDestroyAPIView):
-
     parser_classes = (JSONParser, FormParser, MultiPartParser)
     queryset = Project.objects.with_counts()
     permission_required = ViewClassPermission(
@@ -273,11 +278,10 @@ class ProjectAPI(generics.RetrieveUpdateDestroyAPIView):
     ),
 )  # leaving this method decorator info in case we put it back in swagger API docs
 class ProjectNextTaskAPI(generics.RetrieveAPIView):
-
     permission_required = all_permissions.tasks_view
     serializer_class = TaskWithAnnotationsAndPredictionsAndDraftsSerializer  # using it for swagger API docs
     queryset = Project.objects.all()
-    swagger_schema = None   # this endpoint doesn't need to be in swagger API docs
+    swagger_schema = None  # this endpoint doesn't need to be in swagger API docs
 
     def get(self, request, *args, **kwargs):
         project = self.get_object()
@@ -349,6 +353,7 @@ class LabelConfigValidateAPI(generics.CreateAPIView):
     name='post',
     decorator=swagger_auto_schema(
         tags=['Projects'],
+        operation_id='api_projects_validate_label_config',
         operation_summary='Validate project label config',
         operation_description="""
         Determine whether the label configuration for a specific project is valid.
@@ -442,9 +447,10 @@ class ProjectSummaryResetAPI(GetParentObjectMixin, generics.CreateAPIView):
     ),
 )
 class ProjectImportAPI(generics.RetrieveAPIView):
+    permission_required = all_permissions.projects_change
+    permission_classes = api_settings.DEFAULT_PERMISSION_CLASSES + [ProjectImportPermission]
     parser_classes = (JSONParser,)
     serializer_class = ProjectImportSerializer
-    permission_required = all_permissions.projects_change
     queryset = ProjectImport.objects.all()
     lookup_url_kwarg = 'import_pk'
 
@@ -466,9 +472,10 @@ class ProjectImportAPI(generics.RetrieveAPIView):
     ),
 )
 class ProjectReimportAPI(generics.RetrieveAPIView):
+    permission_required = all_permissions.projects_change
+    permission_classes = api_settings.DEFAULT_PERMISSION_CLASSES + [ProjectImportPermission]
     parser_classes = (JSONParser,)
     serializer_class = ProjectReimportSerializer
-    permission_required = all_permissions.projects_change
     queryset = ProjectReimport.objects.all()
     lookup_url_kwarg = 'reimport_pk'
 
@@ -514,7 +521,6 @@ class ProjectReimportAPI(generics.RetrieveAPIView):
     ),
 )
 class ProjectTaskListAPI(GetParentObjectMixin, generics.ListCreateAPIView, generics.DestroyAPIView):
-
     parser_classes = (JSONParser, FormParser)
     queryset = Task.objects.all()
     parent_queryset = Project.objects.all()
@@ -619,5 +625,33 @@ class ProjectModelVersions(generics.RetrieveAPIView):
     queryset = Project.objects.all()
 
     def get(self, request, *args, **kwargs):
+        # TODO make sure "extended" is the right word and is
+        # consistent with other APIs we've got
+        extended = self.request.query_params.get('extended', False)
+        include_live_models = self.request.query_params.get('include_live_models', False)
         project = self.get_object()
-        return Response(data=project.get_model_versions(with_counters=True))
+        data = project.get_model_versions(with_counters=True, extended=extended)
+
+        if extended:
+            serializer_models = None
+            serializer = ProjectModelVersionExtendedSerializer(data, many=True)
+
+            if include_live_models:
+                ml_models = project.get_ml_backends()
+                serializer_models = MLBackendSerializer(ml_models, many=True)
+
+            # serializer.is_valid(raise_exception=True)
+            return Response({'static': serializer.data, 'live': serializer_models and serializer_models.data})
+        else:
+            return Response(data=data)
+
+    def delete(self, request, *args, **kwargs):
+        project = self.get_object()
+        model_version = request.data.get('model_version', None)
+
+        if not model_version:
+            raise RestValidationError('model_version param is required')
+
+        count = project.delete_predictions(model_version=model_version)
+
+        return Response(data=count)

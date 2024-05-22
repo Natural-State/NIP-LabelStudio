@@ -3,9 +3,9 @@ title: Create and configure projects
 short: Create project
 type: guide
 tier: all
-order: 155
-order_enterprise: 56
-section: "Project Management"
+order: 104
+order_enterprise: 104
+section: "Create & Manage Projects"
 meta_title: Set up your labeling project
 meta_description: Set up data labeling and annotation projects in Label Studio to produce high-quality data for your machine learning and data science projects.
 ---
@@ -27,9 +27,15 @@ After you [start Label Studio](start) and [create an account](signup), create a 
    
 </div>
 
+</div>
+
 <div class="enterprise-only">
 
 1. [Create a project](#Create-a-project)
+2. [Import data](tasks.html).
+3. Select a template to configure the labeling interface for your dataset. [Set up the labeling interface for your project](setup.html).
+4. (Optional) [Set up annotation settings for your project](#Set-up-annotation-settings-for-your-project).
+5. (Optional) [Set up review settings for your project](#Set-up-review-settings-for-your-project).
 2. Import data into Label Studio. 
 
     For small projects, testing, or proof of concept work, you can import local files directly into Label Studio. However, for larger projects, we recommend setting up cloud storage. For more information, see [Get data into Label Studio](tasks) and [Sync data from external storage](storage). 
@@ -197,8 +203,11 @@ To add members to a specific project:
 
 1. Navigate to the project settings and select **Members**. 
 2. Use the search functionality to locate the user that you want to add to the project.
-3. Select the checkbox next to their name and click the `>` arrow to add them. Click the opposite arrow `<` to remove members
-4. Click **Save**.
+3. Select the checkbox next to their name and click the `>` arrow to add them. Click the opposite arrow `<` to remove members.
+4. If the user's organization-level role is Annotator or Reviewer, you can use the drop-down menu to assign them a role specific to this project. 
+
+    Project-level roles are Annotator or Reviewer. So, for example, a user can be an Annotator in one project and a Reviewer in another project. 
+5. Click **Save**.
 
 Users are not sent notifications when they are added to a project. 
 

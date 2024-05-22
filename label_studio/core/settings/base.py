@@ -232,6 +232,7 @@ MIDDLEWARE = [
     'django.middleware.locale.LocaleMiddleware',
     'core.middleware.DisableCSRF',
     'django.middleware.csrf.CsrfViewMiddleware',
+    'core.middleware.XApiKeySupportMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'core.middleware.CommonMiddlewareAppendSlashWithoutRedirect',  # instead of 'CommonMiddleware'
@@ -541,6 +542,8 @@ DATA_MANAGER_PREPROCESS_FILTER = 'data_manager.functions.preprocess_filter'
 USER_LOGIN_FORM = 'users.forms.LoginForm'
 PROJECT_MIXIN = 'projects.mixins.ProjectMixin'
 TASK_MIXIN = 'tasks.mixins.TaskMixin'
+LSE_PROJECT = None
+GET_TASKS_AGREEMENT_QUERYSET = None
 ANNOTATION_MIXIN = 'tasks.mixins.AnnotationMixin'
 ORGANIZATION_MIXIN = 'organizations.mixins.OrganizationMixin'
 USER_MIXIN = 'users.mixins.UserMixin'
@@ -552,6 +555,8 @@ STORAGE_ANNOTATION_SERIALIZER = 'io_storages.serializers.StorageAnnotationSerial
 TASK_SERIALIZER_BULK = 'tasks.serializers.BaseTaskSerializerBulk'
 PREPROCESS_FIELD_NAME = 'data_manager.functions.preprocess_field_name'
 INTERACTIVE_DATA_SERIALIZER = 'data_export.serializers.BaseExportDataSerializerForInteractive'
+STORAGE_PERMISSION = 'io_storages.permissions.StoragePermission'
+PROJECT_IMPORT_PERMISSION = 'projects.permissions.ProjectImportPermission'
 DELETE_TASKS_ANNOTATIONS_POSTPROCESS = None
 
 
@@ -605,8 +610,8 @@ FEATURE_FLAGS_OFFLINE = get_bool_env('FEATURE_FLAGS_OFFLINE', True)
 # default value for feature flags (if not overridden by environment or client)
 FEATURE_FLAGS_DEFAULT_VALUE = False
 
-# Whether to send analytics telemetry data
-COLLECT_ANALYTICS = get_bool_env('collect_analytics', True)
+# Whether to send analytics telemetry data. Fall back to old lowercase name for legacy compatibility.
+COLLECT_ANALYTICS = get_bool_env('COLLECT_ANALYTICS', get_bool_env('collect_analytics', True))
 
 # Strip harmful content from SVG files by default
 SVG_SECURITY_CLEANUP = get_bool_env('SVG_SECURITY_CLEANUP', False)
@@ -734,3 +739,7 @@ if ENABLE_CSP := get_bool_env('ENABLE_CSP', True):
 
 CLOUD_STORAGE_CHECK_FOR_RECORDS_PAGE_SIZE = get_env('CLOUD_STORAGE_CHECK_FOR_RECORDS_PAGE_SIZE', 10000)
 CLOUD_STORAGE_CHECK_FOR_RECORDS_TIMEOUT = get_env('CLOUD_STORAGE_CHECK_FOR_RECORDS_TIMEOUT', 60)
+
+CONTEXTLOG_SYNC = False
+TEST_ENVIRONMENT = get_bool_env('TEST_ENVIRONMENT', False)
+DEBUG_CONTEXTLOG = get_bool_env('DEBUG_CONTEXTLOG', False)
