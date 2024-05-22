@@ -21,8 +21,11 @@ venv/
 .vscode
 .autoenv
 .env
+.env_dev
 .envrc
 # web/static
+*.crt
+*.key
 
 deploy/license.txt
 deploy/logs/
