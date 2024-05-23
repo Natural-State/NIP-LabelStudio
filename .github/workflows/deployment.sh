@@ -16,16 +16,14 @@ deploy_labelstudio() {
     ARM_TENANT_ID="$7"
     POSTGRES_SECRET_NAME="$8"
     PGPASSWORD="$9"
-    ENV="$10"
     
     echo "Helm release: $HELM_RELEASE"
     echo "Domain name: $DOMAIN_NAME"
     echo "TLS Secret: $TLS_SECRET_NAME"
     echo "POSTGRES_SECRET_NAME: $POSTGRES_SECRET_NAME"
-    echo "ENV: $ENV"
 
     # Helm dependency update
-    # helm dependency update "../../helm/labelstudio"
+    helm dependency update "../../helm/labelstudio"
     
     # Deploy labelstudio with override
     helm upgrade \
@@ -35,12 +33,13 @@ deploy_labelstudio() {
     "../../helm/labelstudio" \
     -f "../../helm/labelstudio/values.yaml" \
     -f "../../helm/labelstudio/values.override.yaml" \
-    -f "../../helm/labelstudio/values.override.$ENV.yaml" \
     --set "global.pgConfig.host=$DB_HOST" \
     --set "global.pgConfig.userName=$DB_USERNAME" \
     --set "global.pgConfig.password.secretName=$POSTGRES_SECRET_NAME" \
     --set "global.pgConfig.password.secretKey=pgpassword" \
     --set "app.ingress.host=$DOMAIN_NAME" \
+    --set "app.ingress.tls[0].hosts[0]=$DOMAIN_NAME" \
+    --set "app.ingress.tls[0].secretName=ingress-tls-labelstudio" \
     --debug
     
 }
