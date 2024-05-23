@@ -18,6 +18,7 @@ deploy_labelstudio() {
     POSTGRES_SECRET_NAME="$9"
     PGPASSWORD="$10"
     ENV="$11"
+    PLCHLDR="$12"
     
     echo "Namespace: $NAMESPACE"
     echo "Helm release: $HELM_RELEASE"
