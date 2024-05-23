@@ -2,14 +2,6 @@ name: "LabelStudio: Deploy"
 on:
   workflow_dispatch:
     inputs:
-      build:
-        type: choice
-        options:
-          - dev
-          - stg
-        description: "The environment to build"
-        required: true
-        default: dev
       environment:
         description: "The environment to deploy to"
         type: environment
@@ -79,21 +71,8 @@ jobs:
             --PGPASSWORD ${{ env.PGPASSWORD }}
 
       - name: Update helm chart and values
-        env:
-          ENV_VAR: ${{ github.event.inputs.environment }}
         run: |
           source ./deployment.sh
-          deploy_labelstudio \
-            ${{ env.namespace }} \
-            ${{ env.helm_release }} \
-            ${{ secrets.DOMAIN_NAME }} \
-            ${{ env.tls_secret_name }} \
-            ${{ steps.kvsecrets.outputs.DB_HOST }} \
-            ${{ steps.kvsecrets.outputs.DB_USERNAME }} \
-            ${{ steps.kvsecrets.outputs.DB_PASSWORD }} \
-            ${{ secrets.ARM_TENANT_ID }} \
-            ${{ env.postgres_secret_name }} \
-            ${{ env.PGPASSWORD }} \
-            ${{ env.ENV_VAR }}
+          deploy_labelstudio ${{ env.namespace }} ${{ env.helm_release }} ${{ secrets.DOMAIN_NAME }} ${{ env.tls_secret_name }} ${{ steps.kvsecrets.outputs.DB_HOST }} ${{ steps.kvsecrets.outputs.DB_USERNAME }} ${{ steps.kvsecrets.outputs.DB_PASSWORD }} ${{ secrets.ARM_TENANT_ID }} ${{ env.postgres_secret_name }} ${{ env.PGPASSWORD }} ${{ secrets.ENV }}
             
 

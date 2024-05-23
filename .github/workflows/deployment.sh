@@ -17,14 +17,14 @@ deploy_labelstudio() {
     ARM_TENANT_ID="$8"
     POSTGRES_SECRET_NAME="$9"
     PGPASSWORD="$10"
-    ENV_VAR="$11"
+    ENV="$13"
     
     echo "Namespace: $NAMESPACE"
     echo "Helm release: $HELM_RELEASE"
     echo "Domain name: $DOMAIN_NAME"
     echo "TLS Secret: $TLS_SECRET_NAME"
     echo "POSTGRES_SECRET_NAME: $POSTGRES_SECRET_NAME"
-    echo "ENV: $ENV_VAR"
+    echo "ENV: $ENV"
 
     # Helm dependency update
     # helm dependency update "../../helm/labelstudio"
@@ -37,7 +37,7 @@ deploy_labelstudio() {
     "../../helm/labelstudio" \
     -f "../../helm/labelstudio/values.yaml" \
     -f "../../helm/labelstudio/values.override.yaml" \
-    -f "../../helm/labelstudio/values.override.$ENV_VAR.yaml" \
+    -f "../../helm/labelstudio/values.override.$ENV.yaml" \
     --set "global.pgConfig.host=$DB_HOST" \
     --set "global.pgConfig.userName=$DB_USERNAME" \
     --set "global.pgConfig.password.secretName=$POSTGRES_SECRET_NAME" \
