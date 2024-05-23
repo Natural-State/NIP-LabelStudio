@@ -5,8 +5,8 @@
 # Default values if not provided as arguments
 # namespace="labelstudio-namespace"
 # tls_secret_name=""
-# crt_path="./tls.crt"
-# key_path="./tls.key"
+crt_path="./tls.crt"
+key_path="./tls.key"
 # TLS_CRT=""
 # TLS_KEY=""
 # postgres_secret_name=""
@@ -63,13 +63,13 @@ else
 fi
 
 # Decode and save TLS certificate and key
-# echo "$TLS_CRT" | base64 -d > "$crt_path"
-# echo "$TLS_KEY" | base64 -d > "$key_path"
+echo "$TLS_CRT" | base64 -d > "$crt_path"
+echo "$TLS_KEY" | base64 -d > "$key_path"
 
 # Ensure TLS secret exists
 if ! kubectl get secret "$tls_secret_name" -n "$namespace" &>/dev/null; then
     echo "Creating TLS secret $tls_secret_name"
-    kubectl create secret tls "$tls_secret_name" --cert="$TLS_CRT" --key="$TLS_KEY" --namespace "$namespace"
+    kubectl create secret tls "$tls_secret_name" --cert="$crt_path" --key="$key_path" --namespace "$namespace"
 else
     echo "TLS secret $tls_secret_name already exists"
 fi
