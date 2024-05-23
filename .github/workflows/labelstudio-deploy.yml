@@ -21,7 +21,7 @@ env:
   namespace: "labelstudio-namespace"
   helm_release: "labelstudio-release"
   tls_secret_name: "ingress-tls-labelstudio"
-  postgres_secret_name: "${{ secrets.POSTGRES_SECRET_NAME }}"
+  postgres_secret_name: "postgres-labelstudio"
   PGPASSWORD: "${{ secrets.PGPASSWORD }}"
 
 jobs:
