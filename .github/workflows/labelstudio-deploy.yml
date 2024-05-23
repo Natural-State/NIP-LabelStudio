@@ -83,6 +83,6 @@ jobs:
             ${{secrets.ARM_TENANT_ID}} \
             ${{env.postgres_secret_name}} \
             ${{env.PGPASSWORD}} \
-            ${{env.ENV}} \
+            "dev" \
             ${{env.namespace}} # placeholder
 
