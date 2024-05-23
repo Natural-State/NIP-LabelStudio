@@ -16,6 +16,8 @@ deploy_labelstudio() {
     ARM_TENANT_ID="$7"
     POSTGRES_SECRET_NAME="$8"
     PGPASSWORD="$9"
+    LABEL_STUDIO_USERNAME="${10}"
+    LABEL_STUDIO_PASSWORD="${11}"
     
     echo "Helm release: $HELM_RELEASE"
     echo "Domain name: $DOMAIN_NAME"
@@ -40,6 +42,8 @@ deploy_labelstudio() {
     --set "app.ingress.host=$DOMAIN_NAME" \
     --set "app.ingress.tls[0].hosts[0]=$DOMAIN_NAME" \
     --set "app.ingress.tls[0].secretName=ingress-tls-labelstudio" \
+    --set "global.extraEnvironmentVars.LABEL_STUDIO_USERNAME=$LABEL_STUDIO_USERNAME" \
+    --set "global.extraEnvironmentVars.LABEL_STUDIO_PASSWORD=$LABEL_STUDIO_PASSWORD" \
     --debug
     
 }
