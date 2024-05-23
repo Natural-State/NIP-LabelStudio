@@ -73,6 +73,17 @@ jobs:
       - name: Update helm chart and values
         run: |
           source ./deployment.sh
-          deploy_labelstudio ${{ env.namespace }} ${{ env.helm_release }} ${{ secrets.DOMAIN_NAME }} ${{ env.tls_secret_name }} ${{ steps.kvsecrets.outputs.DB_HOST }} ${{ steps.kvsecrets.outputs.DB_USERNAME }} ${{ steps.kvsecrets.outputs.DB_PASSWORD }} ${{ secrets.ARM_TENANT_ID }} ${{ env.postgres_secret_name }} ${{ env.PGPASSWORD }} ${{ secrets.ENV }}
+          deploy_labelstudio \
+            ${{ env.namespace }} \
+            ${{ env.helm_release }} \
+            ${{ secrets.DOMAIN_NAME }} \
+            ${{ env.tls_secret_name }} \
+            ${{ steps.kvsecrets.outputs.DB_HOST }} \
+            ${{ steps.kvsecrets.outputs.DB_USERNAME }} \
+            ${{ steps.kvsecrets.outputs.DB_PASSWORD }} \
+            ${{ secrets.ARM_TENANT_ID }} \
+            ${{ env.postgres_secret_name }} \
+            ${{ env.PGPASSWORD }} \
+            ${{ secrets.ENV }}
             
 
