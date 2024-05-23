@@ -2,6 +2,14 @@ name: "LabelStudio: Deploy"
 on:
   workflow_dispatch:
     inputs:
+      build:
+        type: choice
+        options:
+          - dev
+          - stg
+        description: "The environment to build"
+        required: true
+        default: dev
       environment:
         description: "The environment to deploy to"
         type: environment
@@ -13,17 +21,17 @@ defaults:
     working-directory: ".github/workflows"
 
 env:
-  TLS_CRT: "${{secrets.TLS_CRT}}"
-  TLS_KEY: "${{secrets.TLS_KEY}}"
-  KUBERNETES_RESOURCE_GROUP: "${{secrets.KUBERNETES_RESOURCE_GROUP}}"
-  KUBERNETES_CLUSTER_NAME: "${{secrets.KUBERNETES_CLUSTER_NAME}}"
-  POSTGRES_KEYVAULT: "${{secrets.POSTGRES_KEYVAULT}}"
+  TLS_CRT: "${{ secrets.TLS_CRT }}"
+  TLS_KEY: "${{ secrets.TLS_KEY }}"
+  KUBERNETES_RESOURCE_GROUP: "${{ secrets.KUBERNETES_RESOURCE_GROUP }}"
+  KUBERNETES_CLUSTER_NAME: "${{ secrets.KUBERNETES_CLUSTER_NAME }}"
+  POSTGRES_KEYVAULT: "${{ secrets.POSTGRES_KEYVAULT }}"
   namespace: "labelstudio-namespace"
   helm_release: "labelstudio-release"
   tls_secret_name: "ingress-tls-labelstudio"
   postgres_secret_name: "postgres-dev-labelstudio"
-  PGPASSWORD: "${{secrets.PGPASSWORD}}"
-  ENV: "${{ inputs.environment }}"
+  PGPASSWORD: "${{ secrets.PGPASSWORD }}"
+  ENV_VAR: "${{ github.event.inputs.build }}"
 
 jobs:
   deployment:
@@ -62,27 +70,27 @@ jobs:
 
       - name: Create namespace and secret
         run: |
-          source ./secrets.sh -n ${{env.namespace}} \
-            -tls ${{env.tls_secret_name}} \
-            --tls-crt ${{env.TLS_CRT}} \
-            --tls-key ${{env.TLS_KEY}} \
-            --postgres_secret_name ${{env.postgres_secret_name}} \
-            --PGPASSWORD ${{env.PGPASSWORD}}
+          source ./secrets.sh -n ${{ env.namespace }} \
+            -tls ${{ env.tls_secret_name }} \
+            --tls-crt ${{ env.TLS_CRT }} \
+            --tls-key ${{ env.TLS_KEY }} \
+            --postgres_secret_name ${{ env.postgres_secret_name }} \
+            --PGPASSWORD ${{ env.PGPASSWORD }}
 
       - name: Update helm chart and values
         run: |
           source ./deployment.sh
           deploy_labelstudio \
-            ${{env.namespace}} \
-            ${{env.helm_release}} \
-            ${{secrets.DOMAIN_NAME}} \
-            ${{env.tls_secret_name}} \
-            ${{steps.kvsecrets.outputs.DB_HOST}} \
-            ${{steps.kvsecrets.outputs.DB_USERNAME}} \
-            ${{steps.kvsecrets.outputs.DB_PASSWORD}} \
-            ${{secrets.ARM_TENANT_ID}} \
-            ${{env.postgres_secret_name}} \
-            ${{env.PGPASSWORD}} \
-            "dev" \
-            ${{env.namespace}} # placeholder
+            ${{ env.namespace }} \
+            ${{ env.helm_release }} \
+            ${{ secrets.DOMAIN_NAME }} \
+            ${{ env.tls_secret_name }} \
+            ${{ steps.kvsecrets.outputs.DB_HOST }} \
+            ${{ steps.kvsecrets.outputs.DB_USERNAME }} \
+            ${{ steps.kvsecrets.outputs.DB_PASSWORD }} \
+            ${{ secrets.ARM_TENANT_ID }} \
+            ${{ env.postgres_secret_name }} \
+            ${{ env.PGPASSWORD }} \
+            ${{ env.ENV_VAR }} \
+            ${{ env.namespace }} # placeholder
 
