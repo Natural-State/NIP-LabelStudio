@@ -7,7 +7,6 @@
 
 # Function to deploy labelstudio
 deploy_labelstudio() {
-    NAMESPACE="$0"
     HELM_RELEASE="$1"
     DOMAIN_NAME="$2"
     TLS_SECRET_NAME="$3"
@@ -19,7 +18,6 @@ deploy_labelstudio() {
     PGPASSWORD="$9"
     ENV="$10"
     
-    echo "Namespace: $NAMESPACE"
     echo "Helm release: $HELM_RELEASE"
     echo "Domain name: $DOMAIN_NAME"
     echo "TLS Secret: $TLS_SECRET_NAME"
@@ -31,7 +29,7 @@ deploy_labelstudio() {
     
     # Deploy labelstudio with override
     helm upgrade \
-    -n "$NAMESPACE" \
+    -n labelstudio-namespace \
     "$HELM_RELEASE" \
     --install \
     "../../helm/labelstudio" \
