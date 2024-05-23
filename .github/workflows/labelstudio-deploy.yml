@@ -21,7 +21,7 @@ env:
   namespace: "labelstudio-namespace"
   helm_release: "labelstudio-release"
   tls_secret_name: "ingress-tls-labelstudio"
-  postrges_secret_name: "postgres-dev-labelstudio"
+  postgres_secret_name: "postgres-dev-labelstudio"
   PGPASSWORD: "${{secrets.PGPASSWORD}}"
   ENV: "${{ inputs.environment }}"
 
@@ -66,7 +66,7 @@ jobs:
             -tls ${{env.tls_secret_name}} \
             --tls-crt ${{env.TLS_CRT}} \
             --tls-key ${{env.TLS_KEY}} \
-            --postrges_secret_name ${{env.postrges_secret_name}} \
+            --postgres_secret_name ${{env.postgres_secret_name}} \
             --PGPASSWORD ${{env.PGPASSWORD}}
 
       - name: Update helm chart and values
@@ -81,7 +81,7 @@ jobs:
             ${{steps.kvsecrets.outputs.DB_USERNAME}} \
             ${{steps.kvsecrets.outputs.DB_PASSWORD}} \
             ${{secrets.ARM_TENANT_ID}} \
-            ${{env.postrges_secret_name}} \
+            ${{env.postgres_secret_name}} \
             ${{env.PGPASSWORD}} \
             ${{env.ENV}}
 
