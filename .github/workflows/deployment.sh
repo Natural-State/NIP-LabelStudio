@@ -17,8 +17,7 @@ deploy_labelstudio() {
     ARM_TENANT_ID="$8"
     POSTGRES_SECRET_NAME="$9"
     PGPASSWORD="$10"
-    PLCHLDR="$11"
-    ENV_VAR="$12"
+    ENV_VAR="$11"
     
     echo "Namespace: $NAMESPACE"
     echo "Helm release: $HELM_RELEASE"
