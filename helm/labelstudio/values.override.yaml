@@ -18,7 +18,7 @@ global:
   pgConfig:
     # host: "ns-ii-tech-dev-pg-srv.postgres.database.azure.com"
     port: 5432
-    # dbName: "labelstudio"
+    dbName: "labelstudio"
     # userName: "naturalstate"
     # password:
     #   secretName: postgres-dev-labelstudio
@@ -243,7 +243,6 @@ app:
       traefik.ingress.kubernetes.io/ssl-redirect: "true"
       traefik.ingress.kubernetes.io/router.entrypoints: websecure
       traefik.ingress.kubernetes.io/router.tls: "true"
-    # host: "ls-dev.naturalstate.tech"
     path: /
     extraPaths: []
     pathType: ImplementationSpecific
