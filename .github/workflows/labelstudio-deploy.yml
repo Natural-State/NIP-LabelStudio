@@ -23,7 +23,7 @@ env:
   tls_secret_name: "ingress-tls-labelstudio"
   postgres_secret_name: "postgres-dev-labelstudio"
   PGPASSWORD: "${{secrets.PGPASSWORD}}"
-  ENV: "${{ inputs.environment }}"
+  ENV: "dev"
 
 jobs:
   deployment:
