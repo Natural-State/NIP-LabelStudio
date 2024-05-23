@@ -43,16 +43,16 @@ APP_NAME="labelstudio"
 helm_release="${APP_NAME}-release"
 namespace="${APP_NAME}-namespace"
 tls_secret_name="ingress-tls-labelstudio"
-postrges_secret_name="postgres-dev-labelstudio"
+postgres_secret_name="postgres-dev-labelstudio"
 
 # creates the namespace and the tls secret
 source ./secrets.sh \
-    -n $namespace \
-    -tls $tls_secret_name \
+    --namespace $namespace \
+    --tls-secret-name $tls_secret_name \
     --tls-crt $TLS_CRT \
     --tls-key $TLS_KEY \
-    -pst $postrges_secret_name \
-    -pgp $PGPASSWORD
+    --postgres-secret $postgres_secret_name \
+    --postgres-password $PGPASSWORD
 
 echo "Namespace: $namespace"
 echo "Helm release: $helm_release"
@@ -65,6 +65,6 @@ deploy_labelstudio \
     $DB_USERNAME \
     $DB_PASSWORD \
     $ARM_TENANT_ID \
-    $postrges_secret_name \
+    $postgres_secret_name \
     $PGPASSWORD \
     $ENV
