@@ -32,6 +32,9 @@ global:
 
   extraEnvironmentVars:
     SKIP_DB_MIGRATIONS: true
+    LABEL_STUDIO_DISABLE_SIGNUP_WITHOUT_LINK: true
+    LABEL_STUDIO_USERNAME: ""
+    LABEL_STUDIO_PASSWORD: ""
     
   extraEnvironmentSecrets: {}
 
