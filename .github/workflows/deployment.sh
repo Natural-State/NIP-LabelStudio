@@ -7,17 +7,17 @@
 
 # Function to deploy labelstudio
 deploy_labelstudio() {
-    NAMESPACE="$1"
-    HELM_RELEASE="$2"
-    DOMAIN_NAME="$3"
-    TLS_SECRET_NAME="$4"
-    DB_HOST="$5"
-    DB_USERNAME="$6"
-    DB_PASSWORD="$7"
-    ARM_TENANT_ID="$8"
-    POSTGRES_SECRET_NAME="$9"
-    PGPASSWORD="$10"
-    ENV="$13"
+    NAMESPACE="$0"
+    HELM_RELEASE="$1"
+    DOMAIN_NAME="$2"
+    TLS_SECRET_NAME="$3"
+    DB_HOST="$4"
+    DB_USERNAME="$5"
+    DB_PASSWORD="$6"
+    ARM_TENANT_ID="$7"
+    POSTGRES_SECRET_NAME="$8"
+    PGPASSWORD="$9"
+    ENV="$10"
     
     echo "Namespace: $NAMESPACE"
     echo "Helm release: $HELM_RELEASE"
