@@ -19,11 +19,12 @@ deploy_labelstudio() {
     PGPASSWORD="$10"
     ENV="$11"
     
-    echo "Namespace: $namespace"
-    echo "Helm release: $helm_release"
+    echo "Namespace: $NAMESPACE"
+    echo "Helm release: $HELM_RELEASE"
     echo "Domain name: $DOMAIN_NAME"
     echo "TLS Secret: $TLS_SECRET_NAME"
     echo "POSTGRES_SECRET_NAME: $POSTGRES_SECRET_NAME"
+    echo "ENV: $ENV"
 
     # Helm dependency update
     # helm dependency update "../../helm/labelstudio"
