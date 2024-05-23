@@ -1,13 +1,9 @@
-# Default values for Label Studio.
-# This is a YAML-formatted file.
-# Declare variables to be passed into your templates.
+# Default values for Label Studio Dev Deployment
 
 # Set PG_TRGM within Azure Postres Server parameters
 # Source: https://github.com/HumanSignal/label-studio/issues/4310#issuecomment-1678207349
 
 global:
-  # Image pull secret to use for registry authentication.
-  # Alternatively, you can specify the value as an array of strings.
   imagePullSecrets: []
 
   image:
@@ -26,12 +22,6 @@ global:
 
   extraEnvironmentVars:
     SKIP_DB_MIGRATIONS: true
-    
-  extraEnvironmentSecrets: {}
-
-  # File names of a custom SSL root certs. These filename will be appended to existing root certs.
-  # "- /tmp/my_cool_root_cert"
-  customCaCerts: [ ]
   
 app:
   ingress:
@@ -41,14 +31,13 @@ app:
       traefik.ingress.kubernetes.io/ssl-redirect: "true"
       traefik.ingress.kubernetes.io/router.entrypoints: websecure
       traefik.ingress.kubernetes.io/router.tls: "true"
-    # host: "ls-dev.naturalstate.tech"
     path: /
     extraPaths: []
     pathType: ImplementationSpecific
-    # tls:
-    #   - hosts:
-    #     - ls-dev.naturalstate.tech
-    #     secretName: ingress-tls-labelstudio
+    tls:
+      - hosts:
+        - ls-dev.naturalstate.tech
+        secretName: ingress-tls-labelstudio
     extraHosts: [ ]
 
 traefik:
@@ -62,13 +51,3 @@ traefik:
   ssl:
     enabled: true
 
-postgresql:
-  enabled: false
-  clusterDomain: cluster.local
-  architecture: standalone
-  image:
-    tag: 13.12.0
-  auth:
-    username: "labelstudio"
-    password: "labelstudio"
-    database: "labelstudio"

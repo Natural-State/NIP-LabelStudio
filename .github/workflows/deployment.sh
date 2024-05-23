@@ -36,6 +36,7 @@ deploy_labelstudio() {
     "../../helm/labelstudio" \
     -f "../../helm/labelstudio/values.yaml" \
     -f "../../helm/labelstudio/values.override.yaml" \
+    -f "../../helm/labelstudio/values.override.$ENV.yaml" \
     --set "global.pgConfig.host=$DB_HOST" \
     --set "global.pgConfig.userName=$DB_USERNAME" \
     --set "global.pgConfig.password.secretName=$POSTGRES_SECRET_NAME" \

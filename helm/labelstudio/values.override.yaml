@@ -18,11 +18,11 @@ global:
   pgConfig:
     # host: "ns-ii-tech-dev-pg-srv.postgres.database.azure.com"
     port: 5432
-    dbName: "labelstudio"
-    userName: "naturalstate"
-    password:
-      secretName: postgres-dev-labelstudio
-      secretKey: pgpassword
+    # dbName: "labelstudio"
+    # userName: "naturalstate"
+    # password:
+    #   secretName: postgres-dev-labelstudio
+    #   secretKey: pgpassword
     # ssl:
     #   # pgSslMode: "disable"
     #   pgSslSecretName: ""
